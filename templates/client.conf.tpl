@@ -6,10 +6,11 @@ verb 4
 client
 nobind
 dev tun
-cipher AES-128-CBC
-key-direction 1
-#redirect-gateway def1
+cipher AES-256-GCM
+redirect-gateway def1
 tls-client
+tls-version-min 1.2
+auth SHA256
 remote-cert-tls server
 # uncomment below lines for use with linux
 #script-security 2
@@ -33,6 +34,8 @@ auth-user-pass
 <ca>
 {{ .CA -}}
 </ca>
-<tls-auth>
+<tls-crypt>
 {{ .TLS -}}
-</tls-auth>
+</tls-crypt>
+dhcp-option DNS 8.8.8.8
+dhcp-option DNS 8.8.4.4

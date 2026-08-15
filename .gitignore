@@ -1,20 +1,7 @@
-bin/
-ovpn-admin
+# PKI - приватные ключи, сертификаты, база пользователей
+easyrsa_master/
+ccd_master/
 
-easyrsa
-easyrsa_master
-easyrsa_slave
-ccd
-ccd_master
-ccd_slave
-frontend/node_modules
-
-main-packr.go
-packrd/
-
-# Editor directories and files
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
+# на случай локальных build-артефактов
+*.log
+.env

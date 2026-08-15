@@ -1,4 +1,3 @@
-version: '3'
 
 services:
   openvpn:
@@ -6,16 +5,17 @@ services:
       context: .
       dockerfile: Dockerfile.openvpn
     image: openvpn:local
+    restart: unless-stopped
     command: /etc/openvpn/setup/configure.sh
     environment:
-      OVPN_SERVER_NET: "192.168.100.0"
+      OVPN_SERVER_NET: "10.0.0.0"
       OVPN_SERVER_MASK: "255.255.255.0"
-      OVPN_PASSWD_AUTH: "true"
+      OVPN_PASSWD_AUTH: "false"
     cap_add:
       - NET_ADMIN
     ports:
-      - 7777:1194 # for openvpn
-      - 8080:8080 # for ovpn-admin because of network_mode
+      - "7777:1194/udp" # for openvpn
+      - "127.0.0.1:8080:8080" # for ovpn-admin because of network_mode
     volumes:
       - ./easyrsa_master:/etc/openvpn/easyrsa
       - ./ccd_master:/etc/openvpn/ccd
@@ -24,17 +24,18 @@ services:
       context: .
       dockerfile: Dockerfile.ovpn-admin
     image: ovpn-admin:local
+    restart: unless-stopped
     command: /app/ovpn-admin
     environment:
       OVPN_DEBUG: "true"
       OVPN_VERBOSE: "true"
-      OVPN_NETWORK: "192.168.100.0/24"
+      OVPN_NETWORK: "10.0.0.0/24"
       OVPN_CCD: "true"
       OVPN_CCD_PATH: "/mnt/ccd"
       EASYRSA_PATH: "/mnt/easyrsa"
-      OVPN_SERVER: "127.0.0.1:7777:tcp"
+      OVPN_SERVER: "${VPS_PUBLIC_IP}:7777:udp"
       OVPN_INDEX_PATH: "/mnt/easyrsa/pki/index.txt"
-      OVPN_AUTH: "true"
+      OVPN_AUTH: "false"
       OVPN_AUTH_DB_PATH: "/mnt/easyrsa/pki/users.db"
       LOG_LEVEL: "debug"
     network_mode: service:openvpn
